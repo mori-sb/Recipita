@@ -1,0 +1,4 @@
+/* ✅ Tailwind のコアスタイルを先頭に配置 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
