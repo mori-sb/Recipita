@@ -43,7 +43,7 @@ export default function OcrPage() {
         }),
       });
 
-      if (!response.ok) throw new Error("登録に失敗しました");
+      if (!response.ok) throw new Error("登録に失敗しました。");
 
       alert("レシートを登録しました！");
       // オプションでフォームリセット
