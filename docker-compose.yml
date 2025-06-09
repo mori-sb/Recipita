@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:15
+    container_name: recipita-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: rootpass
+    volumes:
+      - recipita_pgdata:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+
+volumes:
+  recipita_pgdata:
