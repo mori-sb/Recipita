@@ -1,14 +1,11 @@
-# Javaベースイメージ
-FROM eclipse-temurin:17-jdk-alpine
-
-# 作業ディレクトリ
+# ビルド用ステージ
+FROM maven:3.9.4-eclipse-temurin-17 AS builder
 WORKDIR /app
-
-# Mavenプロジェクト一式をコピー
 COPY . .
+RUN mvn clean package -DskipTests
 
-# JARビルド（依存もDL）
-RUN ./mvnw clean package -DskipTests
-
-# JARを実行
-CMD ["java", "-jar", "target/*.jar"]
+# 実行用ステージ（軽量）
+FROM eclipse-temurin:17-jdk-alpine
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
+CMD ["java", "-jar", "app.jar"]
