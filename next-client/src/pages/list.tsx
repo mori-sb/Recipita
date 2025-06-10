@@ -96,7 +96,7 @@ export default function MonthlyListPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white text-gray-900 px-4 pt-2 pb-16 w-full max-w-sm mx-auto">
+    <div className="min-h-screen overflow-auto bg-gradient-to-b from-blue-50 to-white text-gray-900 px-4 pt-2 pb-16 w-full max-w-sm mx-auto">
       <div className="w-full mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-xl font-bold text-blue-700">📒 レシート一覧</h1>

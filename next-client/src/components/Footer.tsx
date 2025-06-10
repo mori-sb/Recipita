@@ -12,8 +12,8 @@ export default function Footer() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-transparent shadow-md z-50">
-      <div className="max-w-sm mx-auto bg-white border-t border-gray-200 flex">
+    <nav className="fixed bottom-0 left-0 right-0 h-16 bg-transparent shadow-md z-50">
+      <div className="max-w-sm mx-auto bg-white border-t border-gray-200 flex h-full">
         {navItems.map((item) => {
           const isActive = current === item.href;
           return (

@@ -100,93 +100,6 @@ export default function OcrPage() {
     };
   };
 
-  // const parseResponse = (text: string) => {
-  //   const storeMatch = text.match(/店舗名[:：]\**?\s*(.+)/);
-  //   let rawStore = storeMatch?.[1].trim() ?? "";
-  //   rawStore = rawStore.replace(/^\*+\s*/, "");
-
-  //   const priceMatch = text.match(/金額.*?[:：]\**?\s*¥?([\d,]+)/);
-  //   const totalPrice = priceMatch?.[1].replace(/,/g, "") ?? "";
-  //   const parsedTotalPrice = parseInt(totalPrice || "0", 10);
-
-  //   const categoryData: Record<string, number> = {};
-
-  //   // 1. **カテゴリ:** のあとに複数行（カテゴリ: 金額）が続くパターン
-  //   const categoryBlockMatch = text.match(
-  //     /\*\*カテゴリ:\*\*\n([\s\S]*?)(?=\n\*\*[^:]+:\*\*|\n*$)/
-  //   );
-
-  //   if (categoryBlockMatch && categoryBlockMatch[1]) {
-  //     const lines = categoryBlockMatch[1]
-  //       .split("\n")
-  //       .map((line) => line.trim())
-  //       .filter(Boolean);
-
-  //     lines.forEach((line) => {
-  //       if (!line) return;
-
-  //       const cleaned = line
-  //         .replace(/^[-・*]?\s*/, "")
-  //         .replace(/^カテゴリ[:：]?\s*/i, "")
-  //         .trim();
-
-  //       const parts = cleaned
-  //         .split(":".repeat((cleaned.match(/:/g) || []).length))
-  //         .map((s) => s.trim());
-
-  //       if (parts.length === 2) {
-  //         const [name, priceStr] = parts;
-  //         const price = parseInt(priceStr.replace(/[^\d]/g, "") || "0", 10);
-  //         if (name && !isNaN(price)) {
-  //           categoryData[name] = price;
-  //         }
-  //       } else if (parts.length === 1 && parts[0]) {
-  //         categoryData[parts[0]] = parsedTotalPrice;
-  //       }
-  //     });
-  //   }
-
-  //   // 2. **カテゴリ:** 食費: 1022円 という1行形式にも対応
-  //   if (Object.keys(categoryData).length === 0) {
-  //     const singleLine = text.match(/\*\*カテゴリ:\*\*\s*(.+)/);
-  //     if (singleLine && singleLine[1]) {
-  //       const line = singleLine[1].trim();
-  //       const cleaned = line
-  //         .replace(/^[-・*]?\s*/, "")
-  //         .replace(/^カテゴリ[:：]?\s*/i, "")
-  //         .trim();
-
-  //       const parts = cleaned
-  //         .split(":".repeat((cleaned.match(/:/g) || []).length))
-  //         .map((s) => s.trim());
-
-  //       if (parts.length === 2) {
-  //         const [name, priceStr] = parts;
-  //         const price = parseInt(priceStr.replace(/[^\d]/g, "") || "0", 10);
-  //         if (name && !isNaN(price)) {
-  //           categoryData[name] = price;
-  //         }
-  //       } else if (parts.length === 1 && parts[0]) {
-  //         categoryData[parts[0]] = parsedTotalPrice;
-  //       }
-  //     }
-  //   }
-
-  //   const categoryArray = Object.entries(categoryData).map(
-  //     ([name, amount]) => ({
-  //       id: uuid(),
-  //       name,
-  //       amount,
-  //     })
-  //   );
-
-  //   return {
-  //     store: rawStore,
-  //     price: totalPrice,
-  //     categories: categoryArray,
-  //   };
-  // };
-
   const addCategory = () => {
     setCategories((prev) => [...prev, { id: uuid(), name: "", amount: 0 }]);
   };
@@ -235,20 +148,24 @@ export default function OcrPage() {
             </div>
           </div>
 
-          <label className="block bg-blue-50 border-2 border-blue-400 border-dashed rounded-lg py-4 text-center text-blue-600 cursor-pointer hover:bg-blue-100 transition">
+          <label
+            htmlFor="imageUpload"
+            className="block bg-blue-50 border-2 border-blue-400 border-dashed rounded-lg py-4 text-center text-blue-600 cursor-pointer hover:bg-blue-100 transition"
+          >
             📷 写真を撮る / 画像を選ぶ
-            <input
-              type="file"
-              accept="image/*"
-              capture="environment"
-              className="hidden"
-              onChange={handleFileChange}
-              ref={fileInputRef}
-            />
           </label>
 
+          <input
+            id="imageUpload"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileChange}
+            ref={fileInputRef}
+          />
+
           {imageFile && (
-            <p className="text-sm text-blue-700 text-center">
+            <p className="text-sm text-blue-700 text-center mt-2">
               選択済み：{imageFile.name}
             </p>
           )}

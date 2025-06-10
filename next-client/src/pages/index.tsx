@@ -6,12 +6,12 @@ import Image from "next/image"; // ← 追加！
 export default function Home() {
   return (
     <Layout>
-      <div className="min-h-screen bg-blue-50 text-gray-900 px-4 pt-16 pb-24 max-w-sm mx-auto w-full flex flex-col items-center text-center mt-5">
+      <div className="bg-blue-50 text-gray-900 px-4 pt-12 pb-8 w-full max-w-sm mx-auto flex flex-col items-center text-center">
         <h1 className="text-3xl font-bold text-blue-600">Recipita</h1>
         <p className="text-gray-600">レシートでかんたん家計簿</p>
 
         {/* キャラクター画像の追加 */}
-        <div className="relative w-60 h-48 mt-10">
+        <div className="relative w-60 h-48 mt-10 mb-6">
           <Image
             src="/images/recipita-owl.png"
             alt="Recipitaキャラクター"
@@ -21,11 +21,11 @@ export default function Home() {
           />
         </div>
 
-        <div className="bg-green-100 text-green-800 px-3 py-1 text-xs rounded-full border border-green-300 shadow inline-block">
+        <div className="bg-green-100 text-green-800 px-3 py-1 text-xs mb-4 rounded-full border border-green-300 shadow inline-block">
           🏅 初心者節約マスター
         </div>
 
-        <div className="w-full space-y-4 mt-16">
+        <div className="w-full space-y-4 mt-10">
           <Link
             href="/ocr"
             className="w-11/12 max-w-xs mx-auto flex items-center justify-center gap-3 bg-blue-500 text-white rounded-2xl py-4 px-6 shadow-lg hover:bg-blue-600 transition"
