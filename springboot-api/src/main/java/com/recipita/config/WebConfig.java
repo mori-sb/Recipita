@@ -9,8 +9,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:3000")
-                .allowedOrigins("https://next-client-95z1.onrender.com")// ReactのURL
+                .allowedOrigins("http://localhost:3000",
+                        "https://next-client-95z1.onrender.com")// ReactのURL
                 .allowedMethods("*");
     }
 }
