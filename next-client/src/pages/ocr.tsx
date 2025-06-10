@@ -14,6 +14,7 @@ export default function OcrPage() {
   >([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -27,7 +28,7 @@ export default function OcrPage() {
 
   const handleRegister = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/receipts", {
+      const response = await fetch(`${apiUrl}/api/receipts`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +64,7 @@ export default function OcrPage() {
     reader.onloadend = async () => {
       const base64String = (reader.result as string).split(",")[1];
       try {
-        const res = await fetch("http://localhost:8080/api/gemini-ocr", {
+        const res = await fetch(`${apiUrl}api/gemini-ocr`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
