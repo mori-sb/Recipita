@@ -64,7 +64,7 @@ export default function OcrPage() {
     reader.onloadend = async () => {
       const base64String = (reader.result as string).split(",")[1];
       try {
-        const res = await fetch(`${apiUrl}api/gemini-ocr`, {
+        const res = await fetch(`${apiUrl}/api/gemini-ocr`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
