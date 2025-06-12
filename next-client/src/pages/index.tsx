@@ -1,7 +1,7 @@
 import Layout from "@/components/Layout";
-import { HiCamera, HiClipboardList, HiChartPie } from "react-icons/hi";
 import Link from "next/link";
 import Image from "next/image"; // ← 追加！
+import LoginButtons from "@/components/LoginButtons";
 
 export default function Home() {
   return (
@@ -24,6 +24,8 @@ export default function Home() {
         <div className="bg-green-100 text-green-800 px-3 py-1 text-xs mb-4 rounded-full border border-green-300 shadow inline-block">
           🏅 初心者節約マスター
         </div>
+
+        <LoginButtons />
 
         <div className="w-full space-y-4 mt-10">
           <Link
