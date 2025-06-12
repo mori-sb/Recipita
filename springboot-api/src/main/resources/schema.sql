@@ -17,3 +17,11 @@ CREATE TABLE IF NOT EXISTS receipt_category (
   amount INTEGER,
   FOREIGN KEY (receipt_id) REFERENCES receipt(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  uid VARCHAR(128) UNIQUE NOT NULL,
+  email VARCHAR(255),
+  anonymous BOOLEAN DEFAULT false,
+  created_at TIMESTAMP DEFAULT NOW()
+);

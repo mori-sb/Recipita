@@ -1,7 +1,7 @@
 import Layout from "@/components/Layout";
 import Link from "next/link";
 import Image from "next/image"; // ← 追加！
-import LoginButtons from "@/components/LoginButtons";
+import LoginTriggerButton from "@/components/LoginDialog";
 
 export default function Home() {
   return (
@@ -25,9 +25,10 @@ export default function Home() {
           🏅 初心者節約マスター
         </div>
 
-        <LoginButtons />
+        <LoginTriggerButton />
+        <p className="text-gray-700 mb-4 mt-3">ログインしてみよう!</p>
 
-        <div className="w-full space-y-4 mt-10">
+        <div className="w-full space-y-4 mt-5">
           <Link
             href="/ocr"
             className="w-11/12 max-w-xs mx-auto flex items-center justify-center gap-3 bg-blue-500 text-white rounded-2xl py-4 px-6 shadow-lg hover:bg-blue-600 transition"

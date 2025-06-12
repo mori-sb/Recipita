@@ -101,12 +101,9 @@ export default function MonthlyListPage() {
       <div className="w-full mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-xl font-bold text-blue-700">📒 レシート一覧</h1>
-          <Select
-            value={filterMonth}
-            onValueChange={(value: string) => setFilterMonth(value)}
-          >
+          <Select value={filterMonth} onValueChange={setFilterMonth}>
             <SelectTrigger className="w-[120px] bg-white border border-blue-300 text-blue-600 text-sm h-9">
-              <SelectValue />
+              <SelectValue placeholder="月を選択" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="2025-06">2025年6月</SelectItem>
