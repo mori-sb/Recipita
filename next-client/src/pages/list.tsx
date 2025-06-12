@@ -54,6 +54,7 @@ export default function MonthlyListPage() {
   const [selected, setSelected] = useState<ReceiptRecord | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [filterMonth, setFilterMonth] = useState("2025-06");
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const handleEdit = (record: ReceiptRecord) => {
     setSelected(record);
@@ -75,7 +76,7 @@ export default function MonthlyListPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch("http://localhost:8080/api/receipts");
+        const res = await fetch(`${apiUrl}/api/receipts`);
         if (!res.ok) throw new Error("データ取得に失敗しました");
         const data = await res.json();
 
