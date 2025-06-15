@@ -1,14 +1,18 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  reactStrictMode: true,
-  output: "export", // 静的出力に必要
+// next.config.js
+const withPWA = require("next-pwa")({
+  dest: "public",
+  register: true,
+  skipWaiting: true,
+});
+
+module.exports = withPWA({
+  trailingSlash: true,
   eslint: {
     ignoreDuringBuilds: true,
   },
   images: {
-    unoptimized: true, // ← これを追加！
+    unoptimized: true,
   },
-};
-
-export default nextConfig;
+});

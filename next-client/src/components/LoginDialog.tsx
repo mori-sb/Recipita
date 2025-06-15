@@ -47,12 +47,12 @@ export default function LoginTriggerButton() {
           >
             Googleでログイン
           </button>
-          <button
+          {/* <button
             onClick={handleGuest}
             className="w-full bg-gray-100 text-gray-700 py-2 rounded hover:bg-gray-200"
           >
             ゲストとして使う
-          </button>
+          </button> */}
           <button
             onClick={() => setOpen(false)}
             className="w-full text-sm text-gray-500 underline"

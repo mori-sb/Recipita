@@ -16,12 +16,12 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className="bg-blue-50 text-gray-900 px-2 pt-4 w-full max-w-sm mx-auto flex flex-col items-center overflow-hidden text-center h-screen">
+      <div className="bg-blue-50 text-gray-900 px-2 pt-3 w-full max-w-sm mx-auto flex flex-col items-center overflow-hidden text-center h-screen">
         <h1 className="text-3xl font-bold text-blue-600">Recipita</h1>
         <p className="text-gray-600">レシートでかんたん家計簿</p>
 
         {/* キャラクター画像の追加 */}
-        <div className="relative w-60 h-48 mt-10 mb-6">
+        <div className="relative w-60 h-48 mt-5 mb-6">
           <Image
             src="/images/recipita-owl.png"
             alt="Recipitaキャラクター"

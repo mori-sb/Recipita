@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
+import dayjs from "dayjs";
 import {
   Select,
   SelectContent,
@@ -8,83 +9,66 @@ import {
 } from "@/components/ui/select";
 import Footer from "@/components/Footer";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
-
-const dummyData = [
-  {
-    id: 1,
-    store: "ウェルシア 大田上池台店",
-    category: "調剤薬局",
-    amount: 1190,
-    date: "2025-06-01",
-  },
-  {
-    id: 2,
-    store: "セブンイレブン 渋谷店",
-    category: "コンビニ",
-    amount: 540,
-    date: "2025-06-02",
-  },
-  {
-    id: 3,
-    store: "スターバックス 銀座店",
-    category: "カフェ",
-    amount: 680,
-    date: "2025-06-05",
-  },
-  {
-    id: 4,
-    store: "ローソン 中野坂上店",
-    category: "コンビニ",
-    amount: 320,
-    date: "2025-05-25",
-  },
-  {
-    id: 5,
-    store: "マクドナルド 池袋店",
-    category: "ファストフード",
-    amount: 790,
-    date: "2025-05-29",
-  },
-];
+import { CategorySummary } from "@/types/summary";
+import { fetchCategorySummaryByUser } from "@/lib/api";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 const COLORS = ["#60a5fa", "#34d399", "#fbbf24", "#f87171", "#a78bfa"];
 
 export default function SummaryPage() {
-  const [filterMonth, setFilterMonth] = useState("2025-06");
-  const filtered = dummyData.filter((r) => r.date.startsWith(filterMonth));
-  const renderLabel = (entry: any) => entry.name;
+  const [filterMonth, setFilterMonth] = useState(dayjs().format("YYYY-MM"));
+  const [summary, setSummary] = useState<CategorySummary[]>([]);
+  const [amount, setamount] = useState(0);
+  const [uid, setUid] = useState<string | null>(null);
 
-  const categories: Record<string, number> = {};
-  filtered.forEach(({ category, amount }) => {
-    categories[category] = (categories[category] || 0) + amount;
-  });
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  const pieData = Object.entries(categories).map(([name, value]) => ({
-    name,
-    value,
-  }));
-  const totalAmount = Object.values(categories).reduce(
-    (sum, val) => sum + val,
-    0
-  );
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUid(user.uid);
+      }
+    });
+    return () => unsub();
+  }, []);
 
-  const summaryByCategory = filtered.reduce(
-    (acc, curr) => {
-      const cat = curr.category;
-      acc[cat] = (acc[cat] || 0) + curr.amount;
-      return acc;
-    },
-    {} as Record<string, number>
-  );
+  const months = useMemo(() => {
+    const result = [];
+    const now = dayjs();
+    for (let i = 0; i < 6; i++) {
+      const m = now.subtract(i, "month");
+      result.push({
+        value: m.format("YYYY-MM"),
+        label: m.format("YYYY年M月"),
+      });
+    }
+    return result;
+  }, []);
 
-  const chartData = Object.entries(summaryByCategory).map(([name, value]) => ({
-    name,
-    value,
-  }));
+  const sortedSummary = useMemo(() => {
+    const others = summary.find((s) => s.categoryName === "その他");
+    const othersExcluded = summary.filter((s) => s.categoryName !== "その他");
+    return [...othersExcluded, ...(others ? [others] : [])];
+  }, [summary]);
+
+  useEffect(() => {
+    const loadSummary = async () => {
+      if (!uid || !apiUrl) return;
+      try {
+        const data = await fetchCategorySummaryByUser(apiUrl, uid, filterMonth);
+        setSummary(data);
+        setamount(data.reduce((acc, cur) => acc + cur.amount, 0)); // 🔁 修正
+      } catch (e) {
+        console.error("カテゴリ集計取得エラー", e);
+      }
+    };
+    loadSummary();
+  }, [filterMonth, uid, apiUrl]);
 
   const topCategory =
-    chartData.length > 0
-      ? chartData.reduce((a, b) => (a.value > b.value ? a : b)).name
+    summary.length > 0
+      ? summary.reduce((a, b) => (a.amount > b.amount ? a : b)).categoryName
       : null;
 
   const CustomTooltip = ({ active, payload }: any) => {
@@ -100,20 +84,23 @@ export default function SummaryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-blue-50 text-gray-800 px-4 pt-2 pb-6 max-w-sm mx-auto w-full overflow-x-hidden">
+    <div className="min-h-screen bg-blue-50 text-gray-800 px-4 pb-6 max-w-sm mx-auto w-full overflow-x-hidden">
       <div className="max-w-md mx-auto space-y-6 mt-6">
         {/* ヘッダーと月選択 */}
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-blue-800">
             📊 支出 ({filterMonth})
           </h1>
-          <Select value={filterMonth} onValueChange={setFilterMonth}>
+          <Select value={filterMonth} onChange={setFilterMonth}>
             <SelectTrigger className="w-[140px] bg-white border border-blue-300 text-blue-700 rounded-md">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="2025-06">2025年6月</SelectItem>
-              <SelectItem value="2025-05">2025年5月</SelectItem>
+              {months.map((m) => (
+                <SelectItem key={m.value} value={m.value}>
+                  {m.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -124,7 +111,7 @@ export default function SummaryPage() {
           </h2>
 
           <div className="text-center text-blue-800 font-semibold mb-6">
-            今月の合計支出：¥{totalAmount.toLocaleString()}
+            今月の合計支出：¥{amount.toLocaleString()}
           </div>
 
           {/* キャラ＋吹き出し（グラフの中腹に大きめで配置） */}
@@ -151,11 +138,14 @@ export default function SummaryPage() {
             </div>
           </div>
 
-          <div className="flex justify-center mt-12 mb-4">
+          <div className="flex justify-center mt-12 mb-8">
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
                 <Pie
-                  data={pieData}
+                  data={sortedSummary.map((s) => ({
+                    name: s.categoryName,
+                    value: s.amount,
+                  }))}
                   cx="50%"
                   cy="60%"
                   startAngle={90}
@@ -165,7 +155,7 @@ export default function SummaryPage() {
                   dataKey="value"
                   label={({ name }) => name}
                 >
-                  {pieData.map((entry, index) => (
+                  {sortedSummary.map((_, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={COLORS[index % COLORS.length]}
@@ -177,32 +167,31 @@ export default function SummaryPage() {
             </ResponsiveContainer>
           </div>
           {/* カテゴリごとの一覧（アプリ風） */}
-          <div className="space-y-3 mb-6 w-full">
-            {pieData.map(({ name, value }, index) => {
-              const percent = ((value / totalAmount) * 100).toFixed(1);
-              return (
-                <div
-                  key={index}
-                  className="flex items-center justify-between bg-white border border-gray-200 rounded-lg px-4 py-3 shadow-sm w-full"
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                    ></div>
-                    <span className="text-sm font-medium text-gray-700">
-                      {name}
-                    </span>
+          <div className="space-y-3 mb-6 w-full mt-8">
+            {summary.map((item, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between bg-white border border-gray-200 rounded-lg px-4 py-3 shadow-sm w-full"
+              >
+                <div className="flex items-center gap-6">
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                  ></div>
+                  <span className="text-sm font-medium text-gray-700">
+                    {item.categoryName}
+                  </span>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-semibold text-gray-800">
+                    ¥{item.amount.toLocaleString()}
                   </div>
-                  <div className="text-right">
-                    <div className="text-sm font-semibold text-gray-800">
-                      ¥{value.toLocaleString()}
-                    </div>
-                    <div className="text-xs text-gray-500">{percent}%</div>
+                  <div className="text-xs text-gray-500">
+                    {item.percentage.toFixed(1)}%
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </div>
       </div>

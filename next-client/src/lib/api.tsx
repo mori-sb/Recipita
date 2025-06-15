@@ -1,6 +1,7 @@
 // lib/api.ts
 import { auth } from "./firebase";
 import { getIdToken } from "firebase/auth";
+import { CategorySummary } from "@/types/summary";
 
 async function getAuthToken() {
   if (!auth.currentUser) throw new Error("Not authenticated");
@@ -77,3 +78,19 @@ export const deleteReceipt = async (apiUrl: string | undefined, id: number) => {
     throw new Error("削除に失敗しました");
   }
 };
+
+export async function fetchCategorySummaryByUser(
+  apiUrl: string | undefined,
+  uid: string,
+  month: string
+): Promise<CategorySummary[]> {
+  const idToken = await getAuthToken();
+  const res = await fetch(`${apiUrl}/api/summary/${uid}?month=${month}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+  });
+  if (!res.ok) throw new Error("カテゴリ集計の取得に失敗しました");
+  return res.json();
+}
