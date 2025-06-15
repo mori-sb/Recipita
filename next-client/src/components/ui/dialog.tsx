@@ -9,8 +9,12 @@ export function Dialog({
 }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-2">
+      {/* 背景オーバーレイ */}
+      <div className="fixed inset-0 bg-black/40 z-40" />
+
+      {/* モーダル本体 */}
+      <div className="relative z-50 w-full max-w-xs bg-white rounded-lg shadow-lg p-4">
         {children}
       </div>
     </div>

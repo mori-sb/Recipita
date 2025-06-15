@@ -1,12 +1,22 @@
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import Link from "next/link";
 import Image from "next/image"; // ← 追加！
 import LoginTriggerButton from "@/components/LoginDialog";
 
 export default function Home() {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (u) => setUser(u));
+    return () => unsubscribe();
+  }, []);
+
   return (
     <Layout>
-      <div className="bg-blue-50 text-gray-900 px-4 pt-12 pb-8 w-full max-w-sm mx-auto flex flex-col items-center text-center">
+      <div className="bg-blue-50 text-gray-900 px-2 pt-4 w-full max-w-sm mx-auto flex flex-col items-center overflow-hidden text-center h-screen">
         <h1 className="text-3xl font-bold text-blue-600">Recipita</h1>
         <p className="text-gray-600">レシートでかんたん家計簿</p>
 
@@ -25,8 +35,24 @@ export default function Home() {
           🏅 初心者節約マスター
         </div>
 
-        <LoginTriggerButton />
-        <p className="text-gray-700 mb-4 mt-3">ログインしてみよう!</p>
+        {user ? (
+          <div className="text-sm text-blue-700 mb-4">
+            <p>
+              {user.isAnonymous ? "ゲストログイン中" : `${user.email} さん`}
+            </p>
+            <button
+              onClick={() => signOut(auth)}
+              className="text-red-500 text-xs underline mt-1"
+            >
+              ログアウト
+            </button>
+          </div>
+        ) : (
+          <>
+            <LoginTriggerButton />
+            <p className="text-gray-700 mb-4 mt-3">ログインしてみよう!</p>
+          </>
+        )}
 
         <div className="w-full space-y-4 mt-5">
           <Link

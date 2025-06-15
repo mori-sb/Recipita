@@ -1,19 +1,30 @@
 package com.recipita.dto;
 
 public class CategorySummaryDto {
-    private String name;
+    private String categoryName;
     private int amount;
 
-    public CategorySummaryDto() {}
-    public CategorySummaryDto(String name, int amount) {
-        this.name = name;
+    public CategorySummaryDto() {
+    }
+
+    public CategorySummaryDto(String categoryName, int amount) {
+        this.categoryName = categoryName;
         this.amount = amount;
     }
 
-    // Getters and setters
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getCategoryName() {
+        return categoryName;
+    }
 
-    public int getAmount() { return amount; }
-    public void setAmount(int amount) { this.amount = amount; }
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
 }

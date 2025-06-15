@@ -1,11 +1,15 @@
-# ビルド用ステージ
-FROM maven:3.9.4-eclipse-temurin-17 AS builder
+# --- 第一ステージ: ビルド ---
+FROM maven:3.9.4-eclipse-temurin-17 AS build
 WORKDIR /app
-COPY . .
+COPY pom.xml .
+COPY src ./src
 RUN mvn clean package -DskipTests
 
-# 実行用ステージ（軽量）
-FROM eclipse-temurin:17-jdk-alpine
-WORKDIR /app
-COPY --from=builder /app/target/*.jar app.jar
-CMD ["java", "-jar", "app.jar"]
+# --- 実行用ステージ ---
+FROM eclipse-temurin:17-jdk
+RUN groupadd -r spring && useradd -r -g spring spring
+USER spring:spring
+COPY --from=build /app/target/*.jar /app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "/app.jar"]
+

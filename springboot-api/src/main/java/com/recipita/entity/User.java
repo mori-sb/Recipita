@@ -3,17 +3,17 @@ package com.recipita.entity;
 import java.time.LocalDateTime;
 
 public class User {
-    private Long id;
+    private int id;
     private String uid;
     private String email;
     private boolean anonymous;
     private LocalDateTime createdAt;
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

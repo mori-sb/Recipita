@@ -5,10 +5,14 @@ import { HiCamera } from "react-icons/hi";
 import Footer from "@/components/Footer";
 import { FaTrash } from "react-icons/fa";
 import { v4 as uuid } from "uuid";
-import LoadingScreen from "./LoadingScreen"; // LoadingScreenをインポート
+import LoadingScreen from "./LoadingScreen";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { getIdToken } from "firebase/auth";
 
 export default function OcrPage() {
   const [store, setStore] = useState("");
+  const [uid, setUid] = useState<String | null>(null);
   const [price, setPrice] = useState("");
   const [categories, setCategories] = useState<
     { id: string; name: string; amount: number }[]
@@ -19,6 +23,15 @@ export default function OcrPage() {
 
   // --- ロード画面の表示/非表示を管理するstateを追加 ---
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUid(user.uid);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -32,10 +45,15 @@ export default function OcrPage() {
 
   const handleRegister = async () => {
     try {
+      if (!auth.currentUser) return;
+
+      const idToken = await getIdToken(auth.currentUser);
+      console.log("idToken", idToken);
       const response = await fetch(`${apiUrl}/api/receipts`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
         },
         body: JSON.stringify({
           store: store,
@@ -81,6 +99,7 @@ export default function OcrPage() {
         if (!res.ok) throw new Error("OCR API error");
         const text = await res.text();
         const parsed = parseResponse(text);
+        console.log("parsed:", parsed);
         setStore(parsed.store);
         setPrice(parsed.price);
         setCategories(parsed.categories);
@@ -101,11 +120,11 @@ export default function OcrPage() {
     const parsed = JSON.parse(text);
 
     return {
-      store: parsed.storeName || "",
+      store: parsed.store || "",
       price: parsed.totalAmount?.toString() || "0",
       categories: (parsed.categories || []).map((c: any) => ({
         id: uuid(),
-        name: c.name,
+        name: c.categoryName,
         amount: c.amount,
       })),
     };

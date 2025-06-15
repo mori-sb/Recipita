@@ -1,27 +1,42 @@
 package com.recipita.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReceiptResultDto {
-    private String storeName;
+    private String store;
     private int totalAmount;
-    private List<com.recipita.dto.CategorySummaryDto> categories;
+    private List<CategorySummaryDto> categories;
 
     public ReceiptResultDto() {}
 
-    public ReceiptResultDto(String storeName, int totalAmount, List<com.recipita.dto.CategorySummaryDto> categories) {
-        this.storeName = storeName;
+    public ReceiptResultDto(String store, int totalAmount, List<CategorySummaryDto> categories) {
+        this.store = store;
         this.totalAmount = totalAmount;
         this.categories = categories;
     }
 
-    // Getters and setters
-    public String getStoreName() { return storeName; }
-    public void setStoreName(String storeName) { this.storeName = storeName; }
+    public String getStore() {
+        return store;
+    }
 
-    public int getTotalAmount() { return totalAmount; }
-    public void setTotalAmount(int totalAmount) { this.totalAmount = totalAmount; }
+    public void setStore(String store) {
+        this.store = store;
+    }
 
-    public List<com.recipita.dto.CategorySummaryDto> getCategories() { return categories; }
-    public void setCategories(List<com.recipita.dto.CategorySummaryDto> categories) { this.categories = categories; }
+    public int getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(int totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public List<CategorySummaryDto> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<CategorySummaryDto> categories) {
+        this.categories = categories;
+    }
 }
